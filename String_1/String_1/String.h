@@ -9,9 +9,16 @@ namespace qiyu
 	class String
 	{
 	public:
-		typedef char *iterator;
+		typedef char* iterator;
 		iterator begin();
 		iterator end();
+
+		typedef const char* const_iterator;
+		const_iterator cbegin() const;
+		const_iterator cend() const;
+		const_iterator begin() const;
+		const_iterator end() const;
+
 
 		String(char *str);
 		~String();

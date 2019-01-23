@@ -75,12 +75,32 @@ qiyu::String::iterator qiyu::String::end()
 {
 	return _str + _size;
 }
+
 using namespace qiyu;
+
+String::const_iterator String::cbegin() const
+{
+	return _str;
+}
+String::const_iterator String::cend() const
+{
+	return (_str + _size);
+}
+
+String::const_iterator String::begin() const
+{
+	return _str;
+}
+String::const_iterator String::end() const
+{
+	return (_str + _size);
+}
+
 void String::Reserve(size_t n)
 {
 	if (n > _capacity)
 	{
-		_str = (char *)realloc(_str, n);
+		_str = (char *)realloc(_str, n+1);
 		_capacity = n;
 	}
 }
@@ -88,7 +108,7 @@ void String::Pushback(char ch)
 {
 	if (_size == _capacity)
 	{
-		Reserve(_capacity + 4);
+		Reserve(_capacity * 2);
 	}
 	_str[_size] = ch;
 	++_size;
@@ -98,9 +118,10 @@ void String::Pushback(char ch)
 void String::Append(const char *str)
 {
 	assert(str);
-	if (_capacity < _size + strlen(str) + 1)
+	size_t len = strlen(str);
+	if (_capacity < _size + len)
 	{
-		Reserve(_capacity + strlen(str) + 4);
+		Reserve(_size + len);
 	}
 	strcat(_str, str);
 	_size += strlen(str);
@@ -127,7 +148,7 @@ void String::Insert(size_t pos, char ch)
 		return;
 	}
 	Pushback(_str[_size - 1]);
-	for (int i = _size - 1; i > pos; --i)
+	for (size_t i = _size - 1; i > pos; --i)
 	{
 		_str[i] = _str[i - 1];
 	}
@@ -142,11 +163,13 @@ void String::Insert(size_t pos, const char* str)
 	_size = pos;
 	Append(str);
 	Append(ret);
-	//delete[] ret;
+	//delete[] ret;  为什么会崩？
 }
 //
 void String::Erase(size_t pos, size_t len)
 {
+	assert(pos < _size);
+
 	if (pos + len >= _size)
 	{
 		_size = pos;
@@ -162,7 +185,8 @@ void String::Erase(size_t pos, size_t len)
 
 size_t String::Find(char ch, size_t pos = 0)
 {
-	for (int i = pos; i < _size; ++i)
+	assert(pos < _size);
+	for (size_t i = pos; i < _size; ++i)
 	{
 		if (_str[i] == ch)
 			return i;
@@ -172,11 +196,13 @@ size_t String::Find(char ch, size_t pos = 0)
 
 size_t String::Find(const char* str, size_t pos = 0)
 {
-	for (int i = pos; i < _size - strlen(str) + 1; ++i)
+	assert(pos < _size);
+	size_t len = strlen(str);
+	for (size_t i = pos; i < _size - len + 1; ++i)
 	{
-		int index = i;
+		size_t index = i;
 		int flag = 1;
-		for (int j = 0; j < strlen(str); ++j)
+		for (size_t j = 0; j < len; ++j)
 		{
 			if (_str[index++] != str[j])
 			{
@@ -271,13 +297,31 @@ void qiyu::testString()
 	}
 	cout << endl;*/
 	//cout << s1.Find("llo", 0) << endl;
-	//s1.Insert(2, "__");
-	//cout << s1.C_str() << endl;
-	//cout << s1.Size() << endl;
-	//cout << s1.Capacity() << endl;
+	/*s1.Insert(0, '_');
+	cout << s1.C_str() << endl;
+	cout << s1.Size() << endl;
+	cout << s1.Capacity() << endl;*/
 /*	s1.Erase(2, 4);
 	cout << s1.C_str() << endl;
 	cout << s1.Size() << endl;
 	cout << s1.Capacity() << endl*/;
-	cout << (s1 > s2) << endl;
+	/*cout << (s1 > s2) << endl;*/
+	//String s4("0123456");
+	//s4.Erase(3, 4);
+	//cout << s4.C_str() << endl;
+
+	const String s4("xaufe");
+	/*String::const_iterator it = s4.cbegin();
+	while (it != s4.cend())
+	{
+		cout << *it << " ";
+		++it;
+	}
+	cout << endl;*/
+
+	for (auto it : s4)   /*调试发现范围for会去调用const_iterator begin() end(), 为什么不会调用cbegin()...?*/
+	{
+		cout << it << " ";
+	}
+	cout << endl;
 }
