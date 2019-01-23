@@ -20,13 +20,13 @@ namespace qiyu
 		const_iterator end() const;
 
 
-		String(char *str);
+		String(const char *str);
 		~String();
 		String(const String& s);
-		String& operator=(const String& s);
+		String& operator=(String s);
 		void Swap(String& s);
 
-		char *C_str();
+		const char *C_str() const;
 		char& operator[](size_t pos);  /*返回引用，可读可改*/
 		size_t Size();
 		size_t Capacity();
@@ -42,15 +42,15 @@ namespace qiyu
 		void Insert(size_t pos, const char* str);
 
 		void Erase(size_t pos, size_t len);
-		size_t Find(char ch, size_t pos);
-		size_t Find(const char* str, size_t pos);
+		size_t Find(char ch, size_t pos) const;
+		size_t Find(const char* str, size_t pos) const;
 
-		bool operator<(const String& s);
-		bool operator>(const String& s);
-		bool operator<=(const String& s);
-		bool operator>=(const String& s);
-		bool operator==(const String& s);
-		bool operator!=(const String& s);
+		bool operator<(const String& s) const;
+		bool operator>(const String& s) const;
+		bool operator<=(const String& s) const;
+		bool operator>=(const String& s) const;
+		bool operator==(const String& s) const;
+		bool operator!=(const String& s) const;
 
 		//friend ostream& operator<<(ostream& out, const String& s);
 

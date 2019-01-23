@@ -4,7 +4,7 @@ using namespace std;
 
 size_t qiyu::String::npos = -1;
 
-qiyu::String::String(char *str = "")
+qiyu::String::String(const char *str = "")
 {
 	_size = strlen(str);
 	_capacity = _size;
@@ -31,10 +31,9 @@ qiyu::String::String(const String& s)
 	swap(_str, tmp._str);
 }
 
-qiyu::String& qiyu::String::operator=(const String& s)
+qiyu::String& qiyu::String::operator=(String s)
 {
-	String tmp(s);
-	Swap(tmp);
+	Swap(s);
 	return *this;
 }
 
@@ -45,7 +44,7 @@ void qiyu::String::Swap(String& s)
 	swap(_capacity, s._capacity);
 }
 
-char * qiyu::String::C_str()
+const char * qiyu::String::C_str() const
 {
 	return _str;
 }
@@ -183,7 +182,7 @@ void String::Erase(size_t pos, size_t len)
 	}
 }
 
-size_t String::Find(char ch, size_t pos = 0)
+size_t String::Find(char ch, size_t pos = 0) const
 {
 	assert(pos < _size);
 	for (size_t i = pos; i < _size; ++i)
@@ -194,7 +193,7 @@ size_t String::Find(char ch, size_t pos = 0)
 	return npos;
 }
 
-size_t String::Find(const char* str, size_t pos = 0)
+size_t String::Find(const char* str, size_t pos = 0) const
 {
 	assert(pos < _size);
 	size_t len = strlen(str);
@@ -216,12 +215,12 @@ size_t String::Find(const char* str, size_t pos = 0)
 	return npos;
 }
 
-bool String::operator<(const String& s)
+bool String::operator<(const String& s) const
 {
 	return !(*this > s || *this == s);
 }
 
-bool String::operator>(const String& s)
+bool String::operator>(const String& s) const
 {
 	size_t ssize = _size;
 	if (s._size < ssize)
@@ -236,17 +235,17 @@ bool String::operator>(const String& s)
 	return _size > s._size ? true : false;
 }
 
-bool String::operator<=(const String& s)
+bool String::operator<=(const String& s) const
 {
 	return (*this < s || *this == s);
 }
 
-bool String::operator>=(const String& s)
+bool String::operator>=(const String& s) const
 {
 	return (*this > s || *this == s);
 }
 
-bool String::operator==(const String& s)
+bool String::operator==(const String& s) const
 {
 	if (_size == s._size)
 	{
@@ -260,7 +259,7 @@ bool String::operator==(const String& s)
 	return false;
 }
 
-bool String::operator!=(const String& s)
+bool String::operator!=(const String& s) const
 {
 	return !(*this == s);
 }
