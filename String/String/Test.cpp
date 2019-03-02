@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;  /*在使用string类时，必须包含头文件以及using namespace std;*/
 
 void constructor_test()
@@ -130,7 +131,7 @@ void capacity_test()
 void access_test()
 {
 	string s1("xaufe");
-	for (int i = 0; i < s1.size(); ++i)
+	for (size_t i = 0; i < s1.size(); ++i)
 	{
 		cout << s1[i];
 	}
@@ -278,6 +279,21 @@ void test()
 	cout << s << endl;
 }
 
+void swap_test()
+{
+	string s1("abc");
+	string s2("bcd");
+	//cout << s1.c_str() << " " << s2.c_str() << endl;
+	printf("%p\n", s1.c_str());
+	printf("%p\n", s2.c_str());
+	swap(s1, s2);
+	//s1.swap(s2);
+	//cout << s1.c_str() << " " << s2.c_str() << endl;
+	printf("%p\n", s1.c_str());
+	printf("%p\n", s2.c_str());
+
+}
+
 int main()
 {
 	//constructor_test();
@@ -287,6 +303,7 @@ int main()
 	//access_test();
 	//modify_test();
 	//operate_test();
-	test();
+	//test();
+	swap_test();
 	return 0;
 }
