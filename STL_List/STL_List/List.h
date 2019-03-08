@@ -35,7 +35,7 @@ namespace qy
 			:_node(node)
 		{}
 		//copy()
-		ListIterator(const ListIterator& it)
+		ListIterator(const Self& it)
 			:_node(it._node)
 		{}
 
