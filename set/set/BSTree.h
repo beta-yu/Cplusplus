@@ -86,7 +86,7 @@ public:
 
 	bool Erase(const K& val)
 	{
-		//1.被删除节点无孩子，直接删，parent = nullptr;
+		//1.被删除节点无孩子，直接删，parent = nullptr;（可在2中同时处理）
 		//2.被删除节点有一个孩子节点，判断当前节点是parent的right/left，
 		//  连接parent与当前节点的子节点，删除当前节点
 		//3.被删除节点的left/right都不为空，
@@ -114,49 +114,30 @@ public:
 		}
 		if (cur == nullptr)
 			return false;
-		//1.
-		if (cur->_left == nullptr && cur->_right == nullptr)
+		//1.2.
+		if (cur->_left == nullptr) //左右都为空也在这处理
+		{
+			if (cur == _root) //当前删除节点为根结点，根节点下移
+				_root = cur->_right;
+			else //cur == _root时，parent == nullptr
+			{
+				if (parent->_left == cur)
+					parent->_left = cur->_right;
+				else
+					parent->_right = cur->_right;
+			}
+			Destory(cur);
+		}
+		else if (cur->_right == nullptr)
 		{
 			if (cur == _root)
-			{
-				Destory(_root); //如果删除最后一个节点，_root需置空
-				return true;
-			}
+				_root = cur->_left;
 			else
 			{
 				if (parent->_left == cur)
-					parent->_left = nullptr;
+					parent->_left = cur->_left;
 				else
-					parent->_right = nullptr;
-				Destory(cur);
-			}
-		}
-		//2.
-		else if (cur->_left == nullptr || cur->_right == nullptr)
-		{
-			if (cur == _root) //当前删除节点为根结点，根节点下移
-			{
-				if (cur->_left == nullptr)
-					_root = cur->_right;
-				else
-					_root = cur->_left;
-			}
-			else
-			{
-				if (cur->_left == nullptr)
-				{
-					if (parent->_left == cur)
-						parent->_left = cur->_right;
-					else
-						parent->_right = cur->_right;
-				}
-				else
-				{
-					if (parent->_left == cur)
-						parent->_left = cur->_left;
-					else
-						parent->_right = cur->_left;
-				}
+					parent->_right = cur->_left;
 			}
 			Destory(cur);
 		}
@@ -203,15 +184,13 @@ public:
 	}
 
 
-
 	void Inorder()
 	{
 		_Inorder(_root);
 		cout << endl;
 	}
-private:
-	TreeNode<K>* _root;
 
+private:
 	void _Inorder(TreeNode<K>* _root)
 	{
 		if (_root == nullptr)
@@ -229,6 +208,9 @@ private:
 			ptr = nullptr;
 		}
 	}
+
+private:
+	TreeNode<K>* _root;
 };
 
 void Test()
