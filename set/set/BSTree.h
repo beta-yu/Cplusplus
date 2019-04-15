@@ -22,6 +22,25 @@ public:
 		:_root(nullptr)
 	{}
 
+	~BSTree()
+	{
+		__Destory(_root);
+	}
+
+	BSTree(const BSTree& tree)
+	{
+		_root = copy(_root, tree._root);
+	}
+
+	BSTree<K> operator=(const BSTree& tree)
+	{
+		if (_root == tree._root)
+			return *this;
+		__Destory(_root);
+		_root = copy(_root, tree._root);
+		return *this;
+	}
+
 	bool Insert(const K& val)
 	{
 		if (_root == nullptr)
@@ -209,6 +228,25 @@ private:
 		}
 	}
 
+	void __Destory(TreeNode<K>*& ptr)
+	{
+		if (ptr == nullptr)
+			return;
+		__Destory(ptr->_left);
+		__Destory(ptr->_right);
+		Destory(ptr);
+	}
+
+	TreeNode<K>* copy(TreeNode<K>* root1, TreeNode<K>* root2)
+	{
+		if (root2 == nullptr)
+			return nullptr;
+		root1 = new TreeNode<K>(root2->_key);
+		root1->_left = copy(root1->_left, root2->_left);
+		root1->_right = copy(root1->_right, root2->_right);
+		return root1;
+	}
+
 private:
 	TreeNode<K>* _root;
 };
@@ -229,9 +267,16 @@ void Test()
 		s.Insert(it);
 	}
 	s.Inorder();
+
+	BSTree<int> copy(s);
+	copy.Inorder();
+
 	for (auto it : arr)
 	{
 		s.Erase(it);
 		s.Inorder();
 	}
+
+	s = copy;
+	s.Inorder();
 }
