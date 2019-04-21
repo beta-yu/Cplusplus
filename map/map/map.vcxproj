@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClInclude Include="AVLTree.h" />
     <ClInclude Include="BSTree_Map.h" />
+    <ClInclude Include="RBTree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Test.cpp" />
