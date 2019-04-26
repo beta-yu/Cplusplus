@@ -1,63 +1,145 @@
 ﻿#pragma once
 
 enum Color{ RED, BLACK };
-template<class K, class V>
+template<class T>  //map中T：pair<K, V>; set中T：K
 struct RBTreeNode
 {
 	RBTreeNode* _parent;
 	RBTreeNode* _left;
 	RBTreeNode* _right;
 	Color _col;
-	pair<K, V> _kv;
+	T _val;
 
-	RBTreeNode(const pair<K, V>& kv)
+	RBTreeNode(const T& val)
 		:_parent(nullptr)
 		, _left(nullptr)
 		, _right(nullptr)
 		, _col(RED)
-		, _kv(kv)
+		, _val(val)
 	{}
 };
 
-template<class K, class V>
+template<class T>
+class RBTreeIterator
+{
+public:
+	typedef RBTreeIterator self;
+	typedef RBTreeNode<T> Node;
+	RBTreeIterator(Node* node)
+		:_node(node)
+	{}
+
+	self operator++()
+	{
+		//1.当前节点的右不为空，则下一个节点是为它的右子树的最左节点
+		if (_node->_right != nullptr)
+		{
+			Node* cur = _node->_right;
+			while (cur->_left != nullptr)
+			{
+				cur = cur->_left;
+			}
+			_node = cur;
+		}
+		//2.当前节点的右为空，则它的下一个节点的左子树已经访问完毕，该访问其自身
+		else
+		{
+			Node* cur = _node;
+			Node* parent = cur->_parent;
+			while (parent != nullptr && cur == parent->_right) 
+			//寻找cur == parent->_left的parent节点，可能全部访问完，parent == nullptr
+			{
+				cur = parent;
+				parent = parent->_parent;
+			}
+			_node = parent;
+		}
+		return *this;
+	}
+
+	//self operator--()
+
+	bool operator!=(self& it)
+	{
+		return _node != it._node;
+	}
+
+	T& operator*() const //map可能会有需求改变val，使用引用
+	{
+		return _node->_val;
+	}
+
+	T* operator->() const
+	{
+		return &(operator*());
+	}
+
+private:
+	Node* _node;
+};
+
+template<class K, class T, class KeyOfValue>
 class RBTree
 {
-	typedef RBTreeNode<K, V> Node;
+	typedef RBTreeNode<T> Node;
+	typedef RBTreeIterator<T> Iterator;
 public:
 	RBTree()
 		:_root(nullptr)
 	{}
 
-	pair<Node*, bool> Insert(const pair<K, V>& kv)
+	Iterator begin()
 	{
-		Node* newNode = new Node(kv);
+		Node* cur = _root;
+		while (cur && cur->_left)
+		{
+			cur = cur->_left;
+		}
+		return Iterator(cur);
+	}
+
+	Iterator end()
+	{
+		//Node* cur = _root;
+		//while (cur && cur->_right)
+		//{
+		//	cur = cur->_right;
+		//}
+		//return Iterator(cur);
+		return nullptr;
+	}
+
+	KeyOfValue _kov; //function object
+	pair<Iterator, bool> Insert(const T& val)
+	{
+		Node* newNode = new Node(val);
 		if (_root == nullptr)
 		{
 			_root = newNode;
 			_root->_col = BLACK;
-			return make_pair(_root, true);
+			return make_pair(Iterator(_root), true);
 		}
 		Node* parent = nullptr;
 		Node* cur = _root;
 		while (cur != nullptr)
 		{
-			if (cur->_kv.first > kv.first)
+			if (_kov(cur->_val) > _kov(val)) //利用仿函数取Key
 			{
 				parent = cur;
 				cur = cur->_left;
 			}
-			else if (cur->_kv.first < kv.first)
+			else if (_kov(cur->_val) < _kov(val))
 			{
 				parent = cur;
 				cur = cur->_right;
 			}
 			else
 			{
-				return make_pair(cur, false);
+				return make_pair(Iterator(cur), false);
 			}
 		}
 		cur = newNode;
-		if (parent->_kv.first > cur->_kv.first)
+		if (_kov(parent->_val) > _kov(cur->_val))
 			parent->_left = cur;
 		else
 			parent->_right = cur;
@@ -123,7 +205,7 @@ public:
 			}
 		}
 		_root->_col = BLACK; //调整可能导致根结点变为红色
-		return make_pair(newNode, true);
+		return make_pair(Iterator(newNode), true);
 	}
 
 	void InOrder()
@@ -185,7 +267,7 @@ private:
 		if (root == nullptr)
 			return;
 		_InOrder(root->_left);
-		cout << root->_kv.first << ":" << root->_kv.second << endl;
+		cout << root->_val.first << ":" << root->_val.second << endl;
 		_InOrder(root->_right);
 	}
 
@@ -193,18 +275,18 @@ private:
 	Node* _root;
 };
 
-void Test()
-{
-	RBTree<int, int> t;
-	//int arr[] = { 16, 3, 7, 11, 9, 26, 18, 14, 15 };
-	int arr[] = { 4, 2, 6, 1, 3, 5, 15, 7, 16, 14 };
-	//int arr[] = { 1, 2, 1, 2, 3, 4, 3, 4, 5, 6, 5, 6, 7 };
-	for (auto it : arr)
-	{
-		pair<RBTreeNode<int, int>*, bool> result = t.Insert(make_pair(it, 1));
-		if (result.second == false)
-			++(((result.first)->_kv).second);
-	}
-
-	t.InOrder();
-}
+//void Test()
+//{
+//	RBTree<int, int> t;
+//	//int arr[] = { 16, 3, 7, 11, 9, 26, 18, 14, 15 };
+//	int arr[] = { 4, 2, 6, 1, 3, 5, 15, 7, 16, 14 };
+//	//int arr[] = { 1, 2, 1, 2, 3, 4, 3, 4, 5, 6, 5, 6, 7 };
+//	for (auto it : arr)
+//	{
+//		pair<RBTreeNode<int, int>*, bool> result = t.Insert(make_pair(it, 1));
+//		if (result.second == false)
+//			++(((result.first)->_val).second);
+//	}
+//
+//	t.InOrder();
+//}

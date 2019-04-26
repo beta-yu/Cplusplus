@@ -78,6 +78,8 @@
   <ItemGroup>
     <ClInclude Include="AVLTree.h" />
     <ClInclude Include="BSTree_Map.h" />
+    <ClInclude Include="MyMap.h" />
+    <ClInclude Include="MySet.h" />
     <ClInclude Include="RBTree.h" />
   </ItemGroup>
   <ItemGroup>
