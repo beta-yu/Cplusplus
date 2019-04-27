@@ -3,7 +3,7 @@
 #include "RBTree.h"
 
 template<class K>
-struct KeyOfValue
+struct SetKeyOfValue
 {
 	const K operator()(const K& k)
 	{
@@ -14,9 +14,10 @@ struct KeyOfValue
 template<class K>
 class MySet
 {
-	typedef RBTreeIterator<K> Iterator;
 public:
-	pair<Iterator, bool> Insert(K key)
+	typedef RBTreeIterator<K> Iterator;
+
+	pair<Iterator, bool> Insert(const K& key)
 	{
 		return _t.Insert(key);
 	}
@@ -31,7 +32,7 @@ public:
 		return _t.end();
 	}
 private:
-	RBTree<K, K, KeyOfValue<K>> _t;
+	RBTree</*K, */K, SetKeyOfValue<K>> _t;
 };
 
 void MySetTest()
@@ -47,4 +48,20 @@ void MySetTest()
 		cout << it << " ";
 	}
 	cout << endl;
+
+	MySet<int>::Iterator cur = myset.begin();
+	while (true)
+	{
+		MySet<int>::Iterator temp = cur;
+		if (++temp == myset.end())
+			break;
+		++cur;
+	}
+	//我的end()不支持--
+	MySet<int>::Iterator end = cur;
+	while (end != nullptr)
+	{
+		cout << *end << endl;
+		--end;
+	}
 }

@@ -28,8 +28,8 @@ public:
 	RBTreeIterator(Node* node)
 		:_node(node)
 	{}
-
-	self operator++()
+	
+	self operator++() //中序遍历的下一个节点
 	{
 		//1.当前节点的右不为空，则下一个节点是为它的右子树的最左节点
 		if (_node->_right != nullptr)
@@ -57,11 +57,39 @@ public:
 		return *this;
 	}
 
-	//self operator--()
+	self operator--() //中序遍历的后一个节点
+	{
+		if (_node->_left != nullptr)
+		{
+			Node* cur = _node->_left;
+			while (cur->_right)
+			{
+				cur = cur->_right;
+			}
+			_node = cur;
+		}
+		else
+		{
+			Node* cur = _node;
+			Node* parent = cur->_parent;
+			while (parent && cur == parent->_left)
+			{
+				cur = parent;
+				parent = parent->_parent;
+			}
+			_node = parent;
+		}
+		return *this;
+	}
 
-	bool operator!=(self& it)
+	bool operator!=(const self& it) const
 	{
 		return _node != it._node;
+	}
+	
+	bool operator==(const self& it) const
+	{
+		return _node == it._node;
 	}
 
 	T& operator*() const //map可能会有需求改变val，使用引用
@@ -78,7 +106,7 @@ private:
 	Node* _node;
 };
 
-template<class K, class T, class KeyOfValue>
+template</*class K, */class T, class KeyOfValue>
 class RBTree
 {
 	typedef RBTreeNode<T> Node;

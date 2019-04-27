@@ -3,7 +3,7 @@
 #include "RBTree.h"
 
 template<class K, class V>
-struct KeyOfValue
+struct MapKeyOfValue
 {
 	const K operator()(const pair<K, V>& kv)
 	{
@@ -31,28 +31,31 @@ public:
 		return _t.end();
 	}
 
-	V& operator[](const K& key)
+	V& operator[](const K& key) //reference，可能会修改
 	{
 		auto ret = _t.Insert(make_pair(key, V()));
 		return (*(ret.first)).second;
 	}
 private:
-	RBTree<K, pair<K, V>, KeyOfValue<K, V>> _t;
+	RBTree</*K, */pair<K, V>, MapKeyOfValue<K, V>> _t; 
+	//Map中RBTreeNode.val为pair<K, V>，利用MapKeyOfValue取得key
+	//Set中RBTreeNode.val为Key, 利用SetKeyOfValue取得Key，可达到，一个RBTree的实现可供set和map使用。
 };
 
 
 void MyMapTest()
 {
-	MyMap<string, string> mymap;
+	MyMap<int, int> mymap;
 	//int arr[] = { 4, 2, 6, 1, 3, 5, 15, 7, 16, 14 };
-	//for (auto it : arr)
-	//{
-	//	mymap.Insert(make_pair(it, it));
-	//}
+	int arr[] = { 1, 2, 1, 2, 3, 4, 3, 4, 5, 6, 5, 6, 7 };
+	for (auto it : arr)
+	{
+		mymap[it]++;
+	}
 
-	mymap[string("sort")] = string("排序");
-	mymap[string("left")];
-	mymap[string("left")] = string("左");
+	//mymap[string("sort")] = string("排序");
+	//mymap[string("left")];
+	//mymap[string("left")] = string("左");
 
 
 	for (auto it : mymap)

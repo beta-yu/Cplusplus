@@ -6,13 +6,13 @@ using namespace std;
 //#include "BSTree_Map.h"
 //#include "AVLTree.h"
 //#include "RBTree.h"
-//#include "MySet.h"
-#include "MyMap.h"
+#include "MySet.h"
+//#include "MyMap.h"
 
 
 int main()
 {
-	//MySetTest();
-	MyMapTest();
+	MySetTest();
+	//MyMapTest();
 	return 0;
 }
