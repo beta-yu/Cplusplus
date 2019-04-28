@@ -63,8 +63,3 @@ void MyMapTest()
 		cout << it.first << ":" << it.second << endl;
 	}
 }
-
-
-//Iterator   operator--()
-//那些地方需要const，那些地方不能加
-//那些地方需要引用
