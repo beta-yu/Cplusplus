@@ -29,7 +29,7 @@ public:
 		:_node(node)
 	{}
 	
-	self operator++() //中序遍历的下一个节点
+	self operator++() //中序遍历的后一个节点
 	{
 		//1.当前节点的右不为空，则下一个节点是为它的右子树的最左节点
 		if (_node->_right != nullptr)
@@ -57,7 +57,7 @@ public:
 		return *this;
 	}
 
-	self operator--() //中序遍历的后一个节点
+	self operator--() //中序遍历的前一个节点
 	{
 		if (_node->_left != nullptr)
 		{
