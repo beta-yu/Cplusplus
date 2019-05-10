@@ -3,7 +3,6 @@
 template<class K, class V>
 class UnorderedMap
 {
-
 	class MapKeyOfValue
 	{
 	public:
@@ -14,18 +13,29 @@ class UnorderedMap
 	};
 public:
 	typedef HashNode<std::pair<K, V>> Node;
-	typedef HashTableIterator<std::pair<K, V>, MapKeyOfValue> iterator;
-	std::pair<Node*, bool> Insert(const std::pair<K, V>& kv)
+	typedef HashTableIterator<K, std::pair<K, V>, MapKeyOfValue> Iterator;
+	std::pair<Iterator, bool> Insert(const std::pair<K, V>& kv)
 	{
 		return _ht.Insert(kv);
 	}
 
-	iterator& begin()
+	bool Find(const K& key)
+	{
+		return _ht.Find(key);
+	}
+
+	V& operator[](const K& key)
+	{
+		auto ret = Insert(std::make_pair(key, V()));
+		return (*(ret.first)).second;
+	}
+
+	Iterator& begin()
 	{
 		return _ht.begin();
 	}
 
-	iterator& end()
+	Iterator& end()
 	{
 		return _ht.end();
 	}
@@ -47,10 +57,11 @@ void Test()
 	map.Insert(std::make_pair(3, 3));
 	map.Insert(std::make_pair(22, 2));
 	map.Insert(std::make_pair(10, 0));
-
+	map[0] = 1;
 	for (auto it : map)
 	{
 		cout << it.first << ":"<< it.second << endl;
 	}
-	cout << endl;
+	cout << map.Find(0) << endl;
+	cout << map.Find(14) << endl;
 }

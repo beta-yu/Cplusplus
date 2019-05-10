@@ -12,15 +12,18 @@ struct HashNode
 	{}
 };
 
-template<class T, class KeyOfValue>
+template<class K, class T, class KeyOfValue>
+class HashTable;
+
+template<class K, class T, class KeyOfValue>
 class HashTableIterator
 {
 public:
 	typedef HashNode<T> Node;
 	typedef HashTableIterator Self;
-	HashTableIterator(Node* node, const std::vector<Node*>& v)
+	HashTableIterator(Node* node, HashTable<K, T, KeyOfValue>* ht)
 		:_node(node)
-		, _v(v)
+		, _ht(ht)
 	{}
 
 	Self& operator++()
@@ -30,25 +33,33 @@ public:
 		else
 		{
 			KeyOfValue kov;
-			size_t index = kov(_node->_val) % _v.size();
-			++index;
-			for (; index < _v.size(); ++index)
+			size_t htsize = _ht->_table.size();
+			size_t index = kov(_node->_val) % htsize; //计算当前节点所在链在哈希表中的节点索引
+			++index; //当前链访问完
+			for (; index < htsize; ++index)
 			{
-				if (_v[index] != nullptr)
+				if (_ht->_table[index] != nullptr)
 				{
-					_node = _v[index];
+					_node = _ht->_table[index];
+					break;
 				}
 			}
-			if (index == _v.size())
+			if (index == htsize) //访问完毕
 				_node = nullptr;
-		}
-		
+		}	
 		return *this;
 	}
+
+	//不支持operator--(),因为存在单链表
 
 	bool operator!=(const Self& it)
 	{
 		return _node != it._node;
+	}
+
+	bool operator==(const Self& it)
+	{
+		return !(*this != it);
 	}
 
 	T& operator*()
@@ -56,20 +67,24 @@ public:
 		return _node->_val;
 	}
 
-	
+	T* operator->()
+	{
+		return &(operator*());
+	}
 
 private:
 	Node* _node;
-	const std::vector<Node*>& _v;
+	HashTable<K, T, KeyOfValue>* _ht;
 };
 
 template<class K, class T, class KeyOfValue>
 class HashTable
 {
+	template<class K, class T, class KeyOfValue>
+	friend class HashTableIterator;
 public:
 	typedef HashNode<T> Node;
-	typedef HashTableIterator<T, KeyOfValue> iterator;
-
+	typedef HashTableIterator<K, T, KeyOfValue> Iterator;
 private:
 	std::vector<Node*> _table;
 	size_t _size;
@@ -105,7 +120,7 @@ public:
 		:_size(0)
 	{}
 
-	std::pair<Node*, bool> Insert(const T& t)
+	std::pair<Iterator, bool> Insert(const T& t)
 	{
 		CheckCapacity();
 		KeyOfValue kov;
@@ -114,7 +129,7 @@ public:
 		while (cur)
 		{
 			if (kov(cur->_val) == kov(t))
-				return make_pair(cur, false);
+				return make_pair(Iterator(cur, this), false);
 			cur = cur->_next;
 		}
 		//头插
@@ -122,27 +137,45 @@ public:
 		newnode->_next = _table[index];
 		_table[index] = newnode;
 		++_size;
-		return make_pair(newnode, true);
+		return make_pair(Iterator(newnode, this), true);
 	}
 
 	bool Erase(const K& key);
-	bool Find(const K& key);
+	bool Find(const K& key)
+	{
+		KeyOfValue kov;
+		size_t index = 0;
+		for (; index < _table.size(); ++index)
+		{
+			if (_table[index] != nullptr)
+			{
+				Node* cur = _table[index];
+				while (cur)
+				{
+					if (kov(cur->_val) == key)
+						return true;
+					cur = cur->_next;
+				}
+			}
+		}
+		return false;
+	}
 
-	iterator& begin()
+	Iterator begin()
 	{
 		size_t index = 0;
 		for (; index < _table.size(); ++index)
 		{
 			if (_table[index])
 			{
-				return iterator(_table[index], _table);
+				return Iterator(_table[index], this);
 			}
 		}
-		return iterator(nullptr, _table);
+		return Iterator(nullptr, this);
 	}
 
-	iterator& end()
+	Iterator end()
 	{
-		return iterator(nullptr, _table);
+		return Iterator(nullptr, this);
 	}
 };
