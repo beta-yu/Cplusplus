@@ -35,7 +35,7 @@ public:
 			KeyOfValue kov;
 			size_t htsize = _ht->_table.size();
 			size_t index = kov(_node->_val) % htsize; //计算当前节点所在链在哈希表中的节点索引
-			++index; //当前链访问完
+			++index; //当前桶访问完
 			for (; index < htsize; ++index)
 			{
 				if (_ht->_table[index] != nullptr)
