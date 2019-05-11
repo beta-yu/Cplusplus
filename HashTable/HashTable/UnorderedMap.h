@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "hashtable.h"
-template<class K, class V>
+template<class K, class V, class HashFunc = HashFunc<int>>
 class UnorderedMap
 {
 	class MapKeyOfValue
@@ -13,13 +13,18 @@ class UnorderedMap
 	};
 public:
 	typedef HashNode<std::pair<K, V>> Node;
-	typedef HashTableIterator<K, std::pair<K, V>, MapKeyOfValue> Iterator;
+	typedef HashTableIterator<K, std::pair<K, V>, MapKeyOfValue, HashFunc> Iterator;
 	std::pair<Iterator, bool> Insert(const std::pair<K, V>& kv)
 	{
 		return _ht.Insert(kv);
 	}
 
-	bool Find(const K& key)
+	bool Erase(const K& key)
+	{
+		return _ht.Erase(key);
+	}
+
+	Iterator Find(const K& key)
 	{
 		return _ht.Find(key);
 	}
@@ -40,7 +45,7 @@ public:
 		return _ht.end();
 	}
 private:
-	HashTable<int, std::pair<int, int>, MapKeyOfValue> _ht;
+	HashTable<K, std::pair<K, V>, MapKeyOfValue, HashFunc> _ht;
 };
 
 void Test()
@@ -62,6 +67,11 @@ void Test()
 	{
 		cout << it.first << ":"<< it.second << endl;
 	}
-	cout << map.Find(0) << endl;
-	cout << map.Find(14) << endl;
+
+	UnorderedMap<std::string, std::string, HashFunc<std::string>> map_s;
+	map_s["sort"] = "排序";
+	for (auto it : map_s)
+	{
+		cout << it.first.c_str() << ":" << it.second.c_str() << endl;
+	}
 }
