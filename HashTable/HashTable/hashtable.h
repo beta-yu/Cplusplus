@@ -39,7 +39,11 @@ public:
 		{
 			KeyOfValue kov;
 			size_t htsize = _ht->_table.size();
+<<<<<<< HEAD
 			size_t index = HashFunc()(kov(_node->_val)) % htsize; //计算当前节点所在链在哈希表中的节点索引
+=======
+			size_t index = kov(_node->_val) % htsize; //计算当前节点所在链在哈希表中的节点索引
+>>>>>>> 02bca5ce5b6a3e9eac25715fd487eaede01fadd2
 			++index; //当前桶访问完
 			for (; index < htsize; ++index)
 			{
@@ -206,4 +210,7 @@ public:
 		return Iterator(nullptr, this);
 	}
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 02bca5ce5b6a3e9eac25715fd487eaede01fadd2
