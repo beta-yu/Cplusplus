@@ -12,7 +12,7 @@ class UnorderedMap
 		}
 	};
 public:
-	typedef HashNode<std::pair<K, V>> Node;
+	//typedef HashNode<std::pair<K, V>> Node;
 	typedef HashTableIterator<K, std::pair<K, V>, MapKeyOfValue, HashFunc> Iterator;
 	std::pair<Iterator, bool> Insert(const std::pair<K, V>& kv)
 	{
