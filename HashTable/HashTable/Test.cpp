@@ -14,6 +14,7 @@ using std::string;
 
 int main()
 {
-	Test();
+	//Test();
+	TestBloomFilter();
 	return 0;
 }
